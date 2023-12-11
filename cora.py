@@ -1,13 +1,11 @@
 import torch
 from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
-from torch_geometric import nn
-import torch_geometric.transforms as T
+from torch_geometric.nn import GATConv
+import torch.nn.functional as F
+import torch.nn as nn
+from tqdm import tqdm
 import numpy as np
-
-device = torch.device("cuda")
-cora_dataset = Planetoid('/tmp/cora', 'cora')
-cora_data = cora_dataset[0]
 
 
 # Define the GAT model
@@ -41,21 +39,6 @@ class GAT(torch.nn.Module):
         return out
 
 
-num_heads = 8
-dropout_rate = 0.4
-emb_dim1 = 8
-lr = 0.005
-
-cora_num_classes = len(cora_data.y.unique())
-assert cora_num_classes == 7
-
-cora_model = GAT(cora_data.num_features, emb_dim1, num_heads, dropout_rate, 
-            cora_num_classes).to(device)
-cora_data_gpu = cora_data.to(device)
-optimizer = torch.optim.Adam(cora_model.parameters(), lr=lr)
-loss_fn = nn.CrossEntropyLoss()
-
-
 def train(model, data, optimizer, loss_fn):
     model.train()
     optimizer.zero_grad()
@@ -85,9 +68,34 @@ def evaluate(model, data, test_mask):
     return accuracy_list, loss_list
 
 
-num_epochs = 100
-log_freq = 10
+cora_dataset = Planetoid('/tmp/cora', 'cora')
+cora_data = cora_dataset[0]
 
+device = torch.device("cuda")
+
+num_heads = 8
+dropout_rate = 0.4
+emb_dim1 = 8
+lr = 0.005
+
+cora_num_classes = len(cora_data.y.unique())
+assert cora_num_classes == 7
+
+num_epochs = 100
+log_freq = 5
+
+cora_model = GAT(cora_data.num_features, emb_dim1, num_heads, dropout_rate, 
+            cora_num_classes).to(device)
+cora_data.to(device)
+optimizer = torch.optim.Adam(cora_model.parameters(), lr=lr)
+loss_fn = nn.CrossEntropyLoss()
+
+# Evaluate before training
+acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask)
+print("Before training: ")
+print(f"Train Acc: {acc_list[0]:.4f}, Train Loss: {loss_list[0]:.4f}, Val Acc: {acc_list[1]:.4f}, Val Loss: {loss_list[1]:.4f}\n")
+
+# Start training
 for epoch in tqdm(range(num_epochs), desc="Training Epochs"):
     loss = train(cora_model, cora_data, optimizer, loss_fn)
     acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask)
