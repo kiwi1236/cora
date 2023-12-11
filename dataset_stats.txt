@@ -1,0 +1,19 @@
+Cora Dataset Statistics:
+===========================
+Number of Graphs: 1
+Number of Features: 1433
+Number of Classes: 7
+Number of Nodes: 2708
+Number of Edges: 10556
+Average Node Degree: 3.90
+Is This Graph Directed: False
+
+Citeseer Dataset Statistics:
+===========================
+Number of Graphs: 1
+Number of Features: 3703
+Number of Classes: 6
+Number of Nodes: 3327
+Number of Edges: 9104
+Average Node Degree: 2.74
+Is This Graph Directed: False
