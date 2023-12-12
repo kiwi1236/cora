@@ -53,7 +53,7 @@ def train(model, data, optimizer, loss_fn):
 
 
 @torch.no_grad()
-def evaluate(model, data, test_mask):
+def evaluate(model, data, test_mask, loss_fn):
     accuracy_list = [0.0, 0.0]
     loss_list = [0.0, 0.0]
     model.eval()
@@ -68,10 +68,19 @@ def evaluate(model, data, test_mask):
     return accuracy_list, loss_list
 
 
+def summarize(model):
+    num_params = 0
+    print(f"Model Summary: {type(model).__name__}\n")
+    for name, param in model.named_parameters():
+        print(name, param.size())
+        num_params += param.numel()
+    print(f"\nTotal number of params: {num_params}")
+
+
 cora_dataset = Planetoid('/tmp/cora', 'cora')
 cora_data = cora_dataset[0]
 
-device = torch.device("cuda")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 num_heads = 8
 dropout_rate = 0.4
@@ -82,23 +91,27 @@ cora_num_classes = len(cora_data.y.unique())
 assert cora_num_classes == 7
 
 num_epochs = 100
-log_freq = 5
+log_freq = 10
 
 cora_model = GAT(cora_data.num_features, emb_dim1, num_heads, dropout_rate, 
             cora_num_classes).to(device)
 cora_data.to(device)
-optimizer = torch.optim.Adam(cora_model.parameters(), lr=lr)
+
+lambda_l2 = 0.001
+optimizer = torch.optim.Adam(cora_model.parameters(), lr=lr, weight_decay=lambda_l2)
 loss_fn = nn.CrossEntropyLoss()
 
+print(f"Using {device}\n")
+
 # Evaluate before training
-acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask)
+acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask, loss_fn)
 print("Before training: ")
 print(f"Train Acc: {acc_list[0]:.4f}, Train Loss: {loss_list[0]:.4f}, Val Acc: {acc_list[1]:.4f}, Val Loss: {loss_list[1]:.4f}\n")
 
 # Start training
 for epoch in tqdm(range(num_epochs), desc="Training Epochs"):
     loss = train(cora_model, cora_data, optimizer, loss_fn)
-    acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask)
+    acc_list, loss_list = evaluate(cora_model, cora_data, cora_data.val_mask, loss_fn)
     
     if (epoch % log_freq == 0) or (epoch + 1 == num_epochs):
         print(f"Epoch: {epoch+1}, Loss: {loss:.4f}")
