@@ -1,0 +1,42 @@
+GAT:
+	GATConv + GATConv
+	Average Accuracy: 0.7934, Std of Accuracy: 0.0113
+	Average Accuracy: 0.6828, Std of Accuracy: 0.0056
+
+GAT1
+	GATConv + GATConv + GATConv
+	Average Accuracy: 0.7957, Std of Accuracy: 0.0097
+	Average Accuracy: 0.6799, Std of Accuracy: 0.0086
+
+GAT2
+	GATConv + Encoder + GATConv
+	Average Accuracy: 0.7923, Std of Accuracy: 0.0144
+	Average Accuracy: 0.6774, Std of Accuracy: 0.0129
+
+
+GAT3
+	GATConv + GATConv + Encoder + Linear
+	Average Accuracy: 0.7969, Std of Accuracy: 0.0097
+	Average Accuracy: 0.6740, Std of Accuracy: 0.0151
+
+GAT4
+	TransformerConv + TransformerConv
+	Average Accuracy: 0.7899, Std of Accuracy: 0.0047
+	Average Accuracy: 0.6835, Std of Accuracy: 0.0082
+
+GAT5
+	GATConv + TransformerConv + GATConv
+	Average Accuracy: 0.7984, Std of Accuracy: 0.0132
+	Average Accuracy: 0.6788, Std of Accuracy: 0.0141
+
+
+GAT6
+	GATConv + GATConv + TransformerConv
+	Average Accuracy: 0.8091, Std of Accuracy: 0.0096
+	Average Accuracy: 0.6871, Std of Accuracy: 0.0107
+
+GAT7
+	TransformerConv + TransformerConv + TransformerConv
+	Average Accuracy: 0.8001, Std of Accuracy: 0.0133
+	Average Accuracy: 0.6875, Std of Accuracy: 0.0079
+
