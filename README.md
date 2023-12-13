@@ -21,3 +21,5 @@ I have also included a requirements.txt file in this repo. You can run
 to intall the required packages.
 
 Then you should be able to run `cora_colab.ipynb` to reproduce the results if you don't encounter and dependency issues. But still, the most recommended way to run this notebook is through Google Colab with T4 GPU.
+
+After you start on the `cora_colab.ipynb` notebook, simply run through all the cells in the notebook, and you should be able to reproduce all the results given in the final project report.
