@@ -1,0 +1,7 @@
+torch
+torchvision
+torch-scatter
+torch-sparse
+torch-cluster
+git+https://github.com/pyg-team/pytorch_geometric.git
+ogb
